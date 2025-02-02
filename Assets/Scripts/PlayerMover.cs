@@ -7,7 +7,7 @@ public class PlayerMover : MonoBehaviour
     private const string AXIS_VERTICAL = "Vertical";
     
     [SerializeField] private Rigidbody2D _rigidbody2D;
-    [SerializeField] private float _speed = 10f;
+    [SerializeField] private float _speed = 500f;
 
     private Vector2 _velocity;
 
@@ -15,7 +15,7 @@ public class PlayerMover : MonoBehaviour
     {
         _velocity.x = Input.GetAxis(AXIS_HORISONTAL);
         _velocity.y = Input.GetAxis(AXIS_VERTICAL);
-        _rigidbody2D.velocity = _velocity*_speed+Physics2D.gravity;
+        _rigidbody2D.velocity = (_velocity*_speed*Time.fixedDeltaTime+Physics2D.gravity);
     }
 
     private void OnValidate() => _rigidbody2D = GetComponent<Rigidbody2D>();
