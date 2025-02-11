@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -15,8 +16,9 @@ public class PlayerMover : MonoBehaviour
     private bool _isDashing;
     private float _dashColdownTimer;
     private bool CanToDash => !_isDashing && _dashColdownTimer <= 0;
-    
-    
+
+
+
     private void Update()
     {
         _velocity.x = Input.GetAxis(AXIS_HORISONTAL);
