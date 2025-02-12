@@ -11,6 +11,7 @@ public class PlayerMover : MonoBehaviour
     
     [SerializeField] private Rigidbody2D _rigidbody2D;
     [SerializeField] private float _speed = 500f;
+    [SerializeField] private TrailRenderer _vfxTrail;
 
     private Vector2 _velocity;
     private bool _isDashing;
@@ -18,16 +19,17 @@ public class PlayerMover : MonoBehaviour
     private bool CanToDash => !_isDashing && _dashColdownTimer <= 0;
 
 
-
     private void Update()
     {
         _velocity.x = Input.GetAxis(AXIS_HORISONTAL);
         _velocity.y = Input.GetAxis(AXIS_VERTICAL);
+        
 
         if (CanToDash && Input.GetKeyDown(KeyCode.Space))
         {
             _isDashing = true;
             _dashColdownTimer = DASH_COOLDOWN;
+            _vfxTrail.enabled = true;
         }
 
         if (_isDashing)
@@ -35,13 +37,24 @@ public class PlayerMover : MonoBehaviour
             if (_dashColdownTimer > 0)
                 _dashColdownTimer -= Time.deltaTime;
             else
+            {
                 _isDashing = false;
+                Invoke(nameof(DisableTrail),0.2f);
+            }
         }
     }
 
-    private void FixedUpdate() => _rigidbody2D.velocity =
-        _velocity * _speed * Time.fixedDeltaTime * (_isDashing ? DASH_SPEED_MULTIPILER : 1);
+    private void FixedUpdate()
+    {
+        if (_velocity.magnitude > 0.5f)
+            _velocity = _velocity.normalized;
+        
+        _rigidbody2D.velocity =
+            _velocity * _speed * Time.fixedDeltaTime * (_isDashing ? DASH_SPEED_MULTIPILER : 1);
+    }
 
 
     private void OnValidate() => _rigidbody2D = GetComponent<Rigidbody2D>();
+
+    private void DisableTrail() => _vfxTrail.enabled = false;
 }
