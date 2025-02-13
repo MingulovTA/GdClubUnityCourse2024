@@ -9,6 +9,7 @@ public class PlayerAnimator : MonoBehaviour
 
     private const float CROSS_FADE_TIME = .1f;
     private const float ANIM_DEFAULT_SPEED = .5f;
+    private const float SNAP_ANGLE = 45f;
 
     [SerializeField] private Animation _viewAnimation;
     [SerializeField] private Animation _shadowAnimation;
@@ -33,28 +34,16 @@ public class PlayerAnimator : MonoBehaviour
     {
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
-
-        if (x > 0 && Mathf.Abs(y) < Mathf.Abs(x))
-            _angles.y = 90;
-
-        if (x < 0 && Mathf.Abs(y) < Mathf.Abs(x))
-            _angles.y = 270;
-
-        if (y > 0 && Mathf.Abs(y) > Mathf.Abs(x))
-            _angles.y = 0;
-
-        if (y < 0 && Mathf.Abs(y) > Mathf.Abs(x))
-            _angles.y = 180;
+        _angles.y = Mathf.Round(-Mathf.Atan2(y, x) * Mathf.Rad2Deg + 90 / SNAP_ANGLE) * SNAP_ANGLE;
 
         _viewTransform.localEulerAngles = _angles;
         _shadowTransform.localEulerAngles = _angles;
-
+        
         if (Math.Abs(x) > Mathf.Epsilon || Math.Abs(y) > Mathf.Epsilon)
             Run();
         else
             Stop();
     }
-
 
     private void Run()
     {
