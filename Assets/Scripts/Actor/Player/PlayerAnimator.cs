@@ -34,7 +34,8 @@ public class PlayerAnimator : MonoBehaviour
     {
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
-        _angles.y = Mathf.Round(-Mathf.Atan2(y, x) * Mathf.Rad2Deg + 90 / SNAP_ANGLE) * SNAP_ANGLE;
+
+        _angles.y = Mathf.Round((-Mathf.Atan2(y, x) * Mathf.Rad2Deg+90) /SNAP_ANGLE) * SNAP_ANGLE;
 
         _viewTransform.localEulerAngles = _angles;
         _shadowTransform.localEulerAngles = _angles;
@@ -44,6 +45,7 @@ public class PlayerAnimator : MonoBehaviour
         else
             Stop();
     }
+
 
     private void Run()
     {
