@@ -12,7 +12,7 @@ public class KeyTracker : MonoBehaviour
     {
         foreach (var keyCode in _key)
         {
-            if (Input.GetKey(keyCode))
+            if (InputService.GetKey(keyCode))
             {
                 _btn.interactable = false;
                 return;
