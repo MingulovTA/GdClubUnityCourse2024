@@ -39,43 +39,34 @@ public class AiSence : MonoBehaviour
     {
         foreach (var innerActor in _innerActors)
         {
-            RaycastHit hit;
+            RaycastHit2D hit;
 
-            Vector3 targetDir = innerActor.transform.position + Vector3.up - (_eyesPos.position) ;
+            Vector2 targetDir = innerActor.transform.position - _eyesPos.position + Vector3.up/2f;
             Debug.DrawRay(_eyesPos.position , targetDir);
 
-            if (Physics.Raycast(_eyesPos.position, targetDir, out hit, 1000,_layerMask))
+
+            hit = Physics2D.Raycast(_eyesPos.position, targetDir, 100, _layerMask);
+
+            Actor target = hit.transform.GetComponent<Actor>();
+            if (target == innerActor)
             {
-                
-                if (hit.transform.GetComponent<Actor>() == innerActor)
+                Debug.DrawLine(_eyesPos.position , hit.point,Color.red);
+                if (!innerActor.IsOneOf(_detectedActors))
                 {
-                    Debug.DrawLine(_eyesPos.position , hit.point,Color.red);
-                    if (!innerActor.IsOneOf(_detectedActors))
-                    {
-                        innerActor.AddTo(_detectedActors);
-                        OnSeeEnemy?.Invoke();
-                    }
-                }
-                else
-                {
-                    Debug.DrawLine(_eyesPos.position , hit.point,Color.blue);
-                    if (innerActor.IsOneOf(_detectedActors))
-                    {
-                        _detectedActors.Remove(innerActor);
-                        OnLostEnemy?.Invoke();
-                    }
+                    innerActor.AddTo(_detectedActors);
+                    OnSeeEnemy?.Invoke();
                 }
             }
             else
             {
-                Debug.DrawLine(_eyesPos.position , hit.point,Color.magenta);
+                Debug.DrawLine(_eyesPos.position , hit.point,Color.blue);
                 if (innerActor.IsOneOf(_detectedActors))
                 {
                     _detectedActors.Remove(innerActor);
                     OnLostEnemy?.Invoke();
                 }
             }
-            
+
             /*if (!Physics.Raycast(_eyesPos.position, targetDir, out hit, _layerMask))
             {
                 innerActor.AddTo(_detectedActorsForRemove);

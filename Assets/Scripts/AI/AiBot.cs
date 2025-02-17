@@ -23,7 +23,7 @@ public class AiBot : MonoBehaviour
         _botStates = new List<AiBotStateBase>();
         _botStates.Add(new AiStateIdle());
         _botStates.Add(new AiStatePatrolMap(this));
-        _botStates.Add(new AiStateAttackEnemy(this));
+        //_botStates.Add(new AiStateAttackEnemy(this));
         _botStates.Add(new AiStatePatrolPath(this));
         _botStates.Add(new AiStateFollow(this));
         ChangeState(_botStates[0]);
@@ -74,7 +74,7 @@ public class AiBot : MonoBehaviour
         foreach (var aiBotStateBase in _botStates)
         {
             if (!aiBotStateBase.CanTransition) continue;
-            ChangeState(aiBotStateBase);
+            //ChangeState(aiBotStateBase);
             return;
         }
     }
