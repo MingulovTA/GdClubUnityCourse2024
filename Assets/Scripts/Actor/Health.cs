@@ -4,8 +4,10 @@ using UnityEngine;
 public class Health : MonoBehaviour, IHealthable
 {
     [SerializeField] private int _value = 100;
+    [SerializeField] private int _maxValue = 100;
     
     public int Value => _value;
+    public int MaxValue => _maxValue;
     
     public event Action OnValueChanged;
     public event Action<Actor> OnTakeDamage;

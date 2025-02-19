@@ -28,6 +28,16 @@ public class Actor : MonoBehaviour
         SelectWeapon(WpnId.Sword);
     }
 
+    private void OnEnable()
+    {
+        _health.OnTakeDamage += TakeDamageHandler;
+    }
+
+    private void OnDisable()
+    {
+        _health.OnTakeDamage -= TakeDamageHandler;
+    }
+
     public void SelectWeapon(WpnId wpnId)
     {
         if (_weapon != null)
@@ -45,6 +55,20 @@ public class Actor : MonoBehaviour
             _weapon = Resources.Load<Weapon>($"Weapons/{wpnId}");
             _weapon = Instantiate(_weapon, transform);
             _weapon.Init(this);
+        }
+    }
+    
+    private void TakeDamageHandler(Actor obj)
+    {
+        if (_health.Value > 0)
+        {
+            _actorAnimator.PlayPainAnimation();
+        }
+        else
+        {
+            _actorAnimator.PlayDieAnimation();
+            _rigidbody2D.isKinematic = true;
+            _rigidbody2D.simulated = false;
         }
     }
 }

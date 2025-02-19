@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Arpa_common.General.Extentions;
 using ArpaSubmodules.ArpaCommon.General.Extentions.Tween;
 using DG.Tweening;
 using UnityEngine;
@@ -30,12 +31,13 @@ public class Bullet: MonoBehaviour
         _tween?.Kill();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         Actor target = other.GetComponent<Actor>();
         if (target != null && target.ActorClassId != _attacker.ActorClassId)
         {
-            _attacker.Health.TakeDamage(_damage,_attacker);
+            "target".LogEditor();
+            target.Health.TakeDamage(_damage,_attacker);
             if (_destroyAfterHit)
                 Destroy(gameObject);
         }

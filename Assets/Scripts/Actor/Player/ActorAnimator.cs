@@ -7,6 +7,8 @@ public class ActorAnimator : MonoBehaviour
 {
     private const string ANIM_IDLE = "stand";
     private const string ANIM_RUN = "run";
+    private const string ANIM_PAIN = "pain";
+    private const string ANIM_DIE = "death";
 
     private const float CROSS_FADE_TIME = .05f;
     private const float ANIM_DEFAULT_SPEED = .5f;
@@ -14,8 +16,8 @@ public class ActorAnimator : MonoBehaviour
 
     [SerializeField] private Animation _viewAnimation;
     [SerializeField] private Animation _shadowAnimation;
-    [SerializeField] private Rigidbody2D _rigidbody2D;
     [SerializeField] private List<Bone> _bones;
+    [SerializeField] private Actor _actor;
 
     private Transform _viewTransform;
     private Transform _shadowTransform;
@@ -39,8 +41,9 @@ public class ActorAnimator : MonoBehaviour
 
     private void Update()
     {
-        float x = _rigidbody2D.velocity.x;
-        float y = _rigidbody2D.velocity.y;
+        if (_actor.Health.Value<=0) return;
+        float x = _actor.Rigidbody2D.velocity.x;
+        float y = _actor.Rigidbody2D.velocity.y;
 
         if (Math.Abs(x) > Mathf.Epsilon || Math.Abs(y) > Mathf.Epsilon)
         {
@@ -58,7 +61,7 @@ public class ActorAnimator : MonoBehaviour
 
     private void Run()
     {
-        if (_isRunning||_isAnimationPlaying) return;
+        if (_isRunning||_isAnimationPlaying||_actor.Health.Value<=0) return;
         _isRunning = true;
         _viewAnimation.CrossFade(ANIM_RUN, CROSS_FADE_TIME);
         _shadowAnimation.CrossFade(ANIM_RUN, CROSS_FADE_TIME);
@@ -66,7 +69,7 @@ public class ActorAnimator : MonoBehaviour
 
     private void Stop()
     {
-        if (!_isRunning||_isAnimationPlaying) return;
+        if (!_isRunning||_isAnimationPlaying||_actor.Health.Value<=0) return;
         _isRunning = false;
         _viewAnimation.CrossFade(ANIM_IDLE, CROSS_FADE_TIME);
         _shadowAnimation.CrossFade(ANIM_IDLE, CROSS_FADE_TIME);
@@ -84,7 +87,6 @@ public class ActorAnimator : MonoBehaviour
         _isAnimationPlaying = true;
         _viewAnimation[animationClipId].speed = 1f;
         _shadowAnimation[animationClipId].speed = 1f;
-        Debug.Log(_viewAnimation[animationClipId].clip.frameRate);
         _viewAnimation.CrossFade(animationClipId, CROSS_FADE_TIME);
         _shadowAnimation.CrossFade(animationClipId, CROSS_FADE_TIME);
         yield return new WaitForSeconds(_viewAnimation[animationClipId].clip.length);
@@ -92,5 +94,9 @@ public class ActorAnimator : MonoBehaviour
         _isRunning = true;
         Stop();
     }
+
+    public void PlayPainAnimation() => PlayAnimation(ANIM_PAIN);
+
+    public void PlayDieAnimation()=> PlayAnimation(ANIM_DIE);
 }
 

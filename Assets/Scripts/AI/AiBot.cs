@@ -64,8 +64,6 @@ public class AiBot : MonoBehaviour
 
     private void TakeDamageHandler(Actor attacker)
     {
-        if (_aiBotState==null||_aiBotState.AiStateId!=AiStateId.AttackEnemy)
-            transform.LookAt(attacker.transform);
         UpdateAi();
     }
 
