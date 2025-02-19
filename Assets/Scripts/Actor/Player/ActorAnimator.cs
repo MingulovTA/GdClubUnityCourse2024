@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,11 +15,16 @@ public class ActorAnimator : MonoBehaviour
     [SerializeField] private Animation _viewAnimation;
     [SerializeField] private Animation _shadowAnimation;
     [SerializeField] private Rigidbody2D _rigidbody2D;
+    [SerializeField] private List<Bone> _bones;
 
     private Transform _viewTransform;
     private Transform _shadowTransform;
     private bool _isRunning;
     private Vector3 _angles;
+    
+    private bool _isAnimationPlaying;
+    private Coroutine _animationCoroutine;
+    public List<Bone> Bones => _bones;
 
     private void Awake()
     {
@@ -52,7 +58,7 @@ public class ActorAnimator : MonoBehaviour
 
     private void Run()
     {
-        if (_isRunning) return;
+        if (_isRunning||_isAnimationPlaying) return;
         _isRunning = true;
         _viewAnimation.CrossFade(ANIM_RUN, CROSS_FADE_TIME);
         _shadowAnimation.CrossFade(ANIM_RUN, CROSS_FADE_TIME);
@@ -60,10 +66,31 @@ public class ActorAnimator : MonoBehaviour
 
     private void Stop()
     {
-        if (!_isRunning) return;
+        if (!_isRunning||_isAnimationPlaying) return;
         _isRunning = false;
         _viewAnimation.CrossFade(ANIM_IDLE, CROSS_FADE_TIME);
         _shadowAnimation.CrossFade(ANIM_IDLE, CROSS_FADE_TIME);
+    }
+
+    public void PlayAnimation(string animationClipId)
+    {
+        if (_animationCoroutine!=null)
+            StopCoroutine(_animationCoroutine);
+        _animationCoroutine = StartCoroutine(Animation(animationClipId));
+    }
+
+    private IEnumerator Animation(string animationClipId)
+    {
+        _isAnimationPlaying = true;
+        _viewAnimation[animationClipId].speed = 1f;
+        _shadowAnimation[animationClipId].speed = 1f;
+        Debug.Log(_viewAnimation[animationClipId].clip.frameRate);
+        _viewAnimation.CrossFade(animationClipId, CROSS_FADE_TIME);
+        _shadowAnimation.CrossFade(animationClipId, CROSS_FADE_TIME);
+        yield return new WaitForSeconds(_viewAnimation[animationClipId].clip.length);
+        _isAnimationPlaying = false;
+        _isRunning = true;
+        Stop();
     }
 }
 

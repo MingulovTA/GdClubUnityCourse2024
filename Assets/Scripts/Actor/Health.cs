@@ -7,6 +7,12 @@ public class Health : MonoBehaviour, IHealthable
     
     public int Value => _value;
     
+    public event Action OnValueChanged;
+    public event Action<Actor> OnTakeDamage;
+    public event Action OnAddHealth;
+    public event Action OnDie;
+    public event Action OnAlive;
+    
     public void TakeDamage(int delta, Actor attacker)
     {
         if (_value <= 0) return;
@@ -28,24 +34,4 @@ public class Health : MonoBehaviour, IHealthable
         if (lastValue<=0&&_value>0)
             OnAlive?.Invoke();
     }
-
-    public event Action OnValueChanged;
-    public event Action<Actor> OnTakeDamage;
-    public event Action OnAddHealth;
-    public event Action OnDie;
-    public event Action OnAlive;
-}
-
-public interface IHealthable
-{
-    int Value { get; }
-    
-    void TakeDamage(int delta, Actor attacker);
-    void AddHealth(int delta);
-
-    event Action OnValueChanged;
-    event Action<Actor> OnTakeDamage;
-    event Action OnAddHealth;
-    event Action OnDie;
-    event Action OnAlive;
 }

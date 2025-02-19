@@ -20,9 +20,19 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        CheckVelocity();
+        CheckDashing();
+        CheckAttacking();
+    }
+
+    private void CheckVelocity()
+    {
         _velocity.x = InputService.GetAxis(AXIS_HORISONTAL);
         _velocity.y = InputService.GetAxis(AXIS_VERTICAL);
-        
+    }
+
+    private void CheckDashing()
+    {
         if (CanToDash && InputService.GetKeyDown(KeyCode.Space))
         {
             _isDashing = true;
@@ -40,6 +50,15 @@ public class PlayerController : MonoBehaviour
                 Invoke(nameof(DisableTrail),.2f);
             }
         }
+    }
+
+    private void CheckAttacking()
+    {
+        if (_actor.SelectedWpnId == WpnId.None) return;
+        if (Input.GetMouseButtonDown(0))
+            _actor.SelectedWpn.StartAttack();
+        else if (Input.GetMouseButtonUp(0))
+            _actor.SelectedWpn.StopAttack();
     }
 
     private void FixedUpdate()
